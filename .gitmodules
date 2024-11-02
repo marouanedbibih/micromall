@@ -1,0 +1,3 @@
+[submodule "config-server"]
+    path = cloud/config-server
+    url = https://github.com/marouanedbibih/micromall-config-server.git
