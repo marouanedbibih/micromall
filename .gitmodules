@@ -1,3 +1,10 @@
 [submodule "config-server"]
     path = cloud/config-server
     url = https://github.com/marouanedbibih/micromall-config-server.git
+
+
+# Microservices Modules
+
+[submodule "customer-service"]
+    path = microservices/customer
+    url = https://github.com/marouanedbibih/micromall-customer-service.git
