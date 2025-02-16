@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: eureka-server
+  labels:
+    app: eureka
+spec:
+  serviceName: "eureka-server-headless"
+  replicas: 1  # Adjust this based on your requirements
+  selector:
+    matchLabels:
+      app: eureka
+  template:
+    metadata:
+      labels:
+        app: eureka
+    spec:
+      containers:
+      - name: eureka-server
+        image: marouanedbibih/micromall-eureka:0.0.3
+        ports:
+        - containerPort: 8761
+        env:
+          - name: CONFIG_SERVER_URI
+            valueFrom:
+              configMapKeyRef:
+                name: micromall-config-map
+                key: CONFIG_SERVER_URI
+          - name: SPRING_PROFILES_ACTIVE
+            value: "k8s"

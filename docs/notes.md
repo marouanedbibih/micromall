@@ -1,0 +1,1 @@
+update the products services by set the dto in create and update handle the category informations

@@ -1,0 +1,51 @@
+# Default Profile
+spring:
+  application:
+    name: config-server
+  profiles:
+    active: default
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/marouanedbibih/micromall-config
+          default-label: main
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    hostname: localhost
+logging:
+  level:
+    root: INFO
+server:
+  port: 8888
+
+---
+# Kubernetes (k8s) Profile
+spring:
+  profiles: k8s
+  application:
+    name: config-server
+  cloud:
+    config:
+      server:
+        git:
+          uri: ${GIT_URI}
+          default-label: main
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://${EUREKA_SERVER}:8761/eureka/
+  instance:
+    hostname: ${HOSTNAME}
+logging:
+  level:
+    root: DEBUG
+server:
+  port: 8888

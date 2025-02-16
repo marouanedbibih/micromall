@@ -1,0 +1,85 @@
+# Config Server Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: micromall-config-server
+  labels:
+    app: micromall-config-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: micromall-config-server
+  template:
+    metadata:
+      labels:
+        app: micromall-config-server
+    spec:
+      # Containers
+      containers:
+      - name: micromall-config-server
+        image: marouanedbibih/micromall-config-server:0.0.1
+        ports:
+        - containerPort: 8888
+        # Resources
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+        # Environment Variables
+        env:
+        - name: GIT_URI
+          valueFrom:
+            configMapKeyRef:
+              name: micromall-config-server-config-map
+              key: GIT_URI
+        - name: SPRING_PROFILES_ACTIVE
+          valueFrom:
+            configMapKeyRef:
+              name: micromall-config-server-config-map
+              key: SPRING_PROFILES_ACTIVE
+        - name: EUREKA_SERVER
+          valueFrom:
+            configMapKeyRef:
+              name: micromall-config-server-config-map
+              key: EUREKA_SERVER
+        # Volume Mounts
+        volumeMounts:
+        - name: config-volume
+          mountPath: /app/config
+          readOnly: true
+        # Probes
+        # readinessProbe:
+        #   httpGet:
+        #     path: /actuator/health
+        #     port: 8888
+        #   initialDelaySeconds: 5
+        #   periodSeconds: 10
+        #   failureThreshold: 3
+        # livenessProbe:
+        #   httpGet:
+        #     path: /actuator/health
+        #     port: 8888
+        #   initialDelaySeconds: 15
+        #   periodSeconds: 20
+        #   failureThreshold: 3
+        # startupProbe:
+        #   httpGet:
+        #     path: /actuator/health
+        #     port: 8888
+        #   initialDelaySeconds: 30 
+        #   periodSeconds: 10
+        #   failureThreshold: 30  
+      # Volumes
+      volumes:
+      - name: config-volume
+        configMap:
+          name: micromall-config-server-config-map
+          items:
+            - key: GIT_URI
+              path: git-uri.txt
+            - key: SPRING_PROFILES_ACTIVE
+              path: spring-profiles-active.txt

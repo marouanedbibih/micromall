@@ -1,0 +1,12 @@
+apiVersion: v1
+data:
+  GIT_URI: https://github.com/marouanedbibih/micromall-config
+  SPRING_PROFILES_ACTIVE: k8s
+  EUREKA_SERVER: http://eureka-server-0.eureka-headless.default.svc.cluster.local:8761/eureka
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2024-12-01T00:30:05Z"
+  name: micromall-config-server-config-map
+  namespace: default
+  resourceVersion: "8515"
+  uid: db8f7c7e-54b1-47cd-b02f-4c71ede2466c
