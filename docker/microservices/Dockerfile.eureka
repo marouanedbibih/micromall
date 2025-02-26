@@ -1,0 +1,33 @@
+# Stage 1: Build the application
+FROM eclipse-temurin:21-jdk-alpine AS build
+
+VOLUME /tmp
+
+WORKDIR /app
+
+COPY microservices/eureka/mvnw .
+COPY microservices/eureka/.mvn .mvn
+COPY microservices/eureka/pom.xml .
+COPY microservices/eureka/src src
+
+RUN ./mvnw install -DskipTests
+
+FROM eclipse-temurin:21-jdk-alpine
+
+WORKDIR /app
+
+ARG SPRING_PROFILES_ACTIVE
+ARG EUREKA_INSTANCE_HOSTNAME
+ARG CONFIGSERVER_HOST
+ARG CONFIGSERVER_PORT
+
+ENV SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+ENV EUREKA_INSTANCE_HOSTNAME=${EUREKA_INSTANCE_HOSTNAME}
+ENV CONFIGSERVER_HOST=${CONFIGSERVER_HOST}
+ENV CONFIGSERVER_PORT=${CONFIGSERVER_PORT}
+
+COPY --from=build /app/target/*.jar app.jar
+
+EXPOSE 8761
+
+ENTRYPOINT ["java", "-jar", "app.jar"]

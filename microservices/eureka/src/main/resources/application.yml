@@ -1,43 +1,17 @@
+server:
+  port: 8761
+
 spring:
   application:
-    name: discovery
-  config:
-    activate:
-      on-profile: default
-server:
-  port: 8761
+    name: eureka
 
-eureka:
-  instance:
-    hostname: localhost
-  client:
-    register-with-eureka: false
-    fetch-registry: false
-    service-url:
-      defaultZone: http://localhost:8761/eureka/
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, configprops, env
+  endpoint:
+    health:
+      show-details: always
 
-server:
-  port: 8761
 
-# Kubernetes profile
----
-spring:
-  application:
-    name: discovery
-  config:
-    activate:
-      on-profile: k8s
-server:
-  port: 8761
-
-eureka:
-  instance:
-    hostname: "${HOSTNAME}.eureka"
-  client:
-    register-with-eureka: false
-    fetch-registry: false
-    service-url:
-      defaultZone: ${EUREKA_SERVER_ADDRESS}
-
-server:
-  port: 8761
