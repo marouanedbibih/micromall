@@ -1,0 +1,23 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://${EUREKA_INSTANCE_HOSTNAME}:${EUREKA_INSTANCE_PORT}/eureka/ 
+    fetch-registry: true   
+    register-with-eureka: true  
+  instance:
+    health-check-url: /actuator/health  
+    status-page-url: /actuator/info   
