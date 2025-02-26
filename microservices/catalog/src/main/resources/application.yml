@@ -1,5 +1,16 @@
+server:
+  port: 8081
+  
 spring:
-    application:
-        name: catalog-service
-    config:
-        import: optional:configserver:http://localhost:8888
+  application:
+    name: catalog-microservice
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, configprops, env
+  endpoint:
+    health:
+      show-details: always
+

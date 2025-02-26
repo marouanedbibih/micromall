@@ -1,1 +1,0 @@
-# micromall-catalog-service

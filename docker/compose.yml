@@ -1,19 +1,19 @@
 services:
-  # # Postgres SQL
-  # postgresql:
-  #   container_name: micromall_pg_sql
-  #   image: postgres
-  #   environment:
-  #     POSTGRES_USER: marouane
-  #     POSTGRES_PASSWORD: marouane
-  #     PGDATA: /data/postgres
-  #   volumes:
-  #     - ./data/pgsql:/data/postgres
-  #   ports:
-  #     - "5432:5432"
-  #   networks:
-  #     - micromall-net
-  #   restart: unless-stopped
+  postgresql:
+    container_name: micromall_pg_sql
+    image: postgres:15
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      PGDATA: /data/postgres
+    volumes:
+      - pgsql-data:/data/postgres
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - micromall-net
+    restart: unless-stopped
 
   # # MongoDB
   # mongodb:
@@ -99,8 +99,14 @@ services:
       CONFIGSERVER_HOST: config-server
       CONFIGSERVER_PORT: 8888
 
-# Networks
 networks:
   micromall-net:
     driver: bridge
     name: micromall-net
+
+volumes:
+  pgsql-data:
+    driver: local
+    name: micromall-pgsql-data
+
+
