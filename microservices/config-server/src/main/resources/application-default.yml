@@ -2,7 +2,7 @@ spring:
   config:
     activate:
       on-profiles:
-        - docker
+        - default
   cloud:
     config:
       server:
@@ -10,3 +10,5 @@ spring:
           uri: https://github.com/marouanedbibih/micromall
           default-label: main
           search-paths: system-configurations
+
+
