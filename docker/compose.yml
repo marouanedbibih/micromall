@@ -82,6 +82,7 @@ services:
     # restart: unless-stopped
     environment:
       SPRING_GIT_URI: https://github.com/marouanedbibih/micromall
+      SPRING_PROFILES_ACTIVE: docker
 
 # Networks
 networks:
