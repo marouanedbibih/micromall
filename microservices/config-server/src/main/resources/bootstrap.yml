@@ -1,0 +1,15 @@
+server:
+    port: 8888
+
+spring:
+    application:
+        name: config-server
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, configprops, env
+  endpoint:
+    health:
+      show-details: always
