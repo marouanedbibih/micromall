@@ -1,0 +1,26 @@
+services:
+  catalog:
+    container_name: micromall_catalog
+    build:
+      context: ../
+      dockerfile: docker/microservices/Dockerfile.catalog
+    ports:
+      - "8081:8081"
+    networks:
+      - micromall-net
+    restart: unless-stopped
+    depends_on:
+      - postgresql
+      - config-server
+      - eureka
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      EUREKA_INSTANCE_HOSTNAME: eureka
+      EUREKA_INSTANCE_PORT: 8761
+      CONFIGSERVER_HOST: config-server
+      CONFIGSERVER_PORT: 8888
+      SPRING_DATASOURCE_HOST: postgresql
+      SPRING_DATASOURCE_PORT: 5432
+      SPRING_DATASOURCE_NAME: catalog_db
+      SPRING_DATASOURCE_USER: user
+      SPRING_DATASOURCE_PASSWORD: password

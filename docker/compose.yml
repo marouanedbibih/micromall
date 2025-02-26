@@ -14,62 +14,27 @@ services:
     networks:
       - micromall-net
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
-  # # MongoDB
-  # mongodb:
-  #   image: mongo
-  #   container_name: micromall_mongo_db
-  #   ports:
-  #     - 27017:27017
-  #   volumes:
-  #     - ./data/mongo:/data
-  #   environment:
-  #     - MONGO_INITDB_ROOT_USERNAME=marouane
-  #     - MONGO_INITDB_ROOT_PASSWORD=marouane
-  #   networks:
-  #     - micromall-net
-  #   restart: unless-stopped
+  # MongoDB
+  mongodb:
+    image: mongo
+    container_name: micromall_mongo_db
+    ports:
+      - 27017:27017
+    volumes:
+      - ./data/mongo:/data
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=marouane
+      - MONGO_INITDB_ROOT_PASSWORD=marouane
+    networks:
+      - micromall-net
+    restart: unless-stopped
 
-  # # Zookeeper
-  # zookeeper:
-  #   image: confluentinc/cp-zookeeper:latest
-  #   container_name: micromall_zookeeper
-  #   environment:
-  #     ZOOKEEPER_SERVER_ID: 1
-  #     ZOOKEEPER_CLIENT_PORT: 2181
-  #     ZOOKEEPER_TICK_TIME: 2000
-  #   ports:
-  #     - "22181:2181"
-  #   networks:
-  #     - micromall-net
-
-  # # Kafka
-  # kafka:
-  #   image: confluentinc/cp-kafka:latest
-  #   container_name: micromall_kafka
-  #   ports:
-  #     - "9092:9092"
-  #   depends_on:
-  #     - zookeeper
-  #   environment:
-  #     KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-  #     KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
-  #     KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
-  #     KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-  #     KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-  #     KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
-  #   networks:
-  #     - micromall-net
-
-  # # Mail Dev
-  # mail-dev:
-  #   container_name: micromall_mail
-  #   image: maildev/maildev
-  #   ports:
-  #     - 1080:1080 # Web Interface
-  #     - 1025:1025 # SMTP
-
-  # Config Server
   config-server:
     build:
       context: ../
@@ -79,10 +44,11 @@ services:
       - 8888:8888
     networks:
       - micromall-net
-    # restart: unless-stopped
+    restart: unless-stopped
     environment:
       SPRING_GIT_URI: https://github.com/marouanedbibih/micromall
       SPRING_PROFILES_ACTIVE: docker
+
   eureka:
     build:
       context: ../
@@ -92,12 +58,19 @@ services:
       - 8761:8761
     networks:
       - micromall-net
-    # restart: unless-stopped
+    restart: unless-stopped
+    depends_on:
+      - config-server
     environment:
       SPRING_PROFILES_ACTIVE: docker
       EUREKA_INSTANCE_HOSTNAME: eureka
       CONFIGSERVER_HOST: config-server
       CONFIGSERVER_PORT: 8888
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8761/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
 networks:
   micromall-net:
