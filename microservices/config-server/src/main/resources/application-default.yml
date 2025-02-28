@@ -9,6 +9,6 @@ spring:
         git:
           uri: https://github.com/marouanedbibih/micromall
           default-label: main
-          search-paths: system-configurations
+          search-paths: configurations
 
 
