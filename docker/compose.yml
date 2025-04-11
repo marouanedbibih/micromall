@@ -71,6 +71,27 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
+  redis:
+    image: redis:7.2
+    container_name: micromall_redis
+    ports:
+      - 6379:6379
+    networks:
+      - micromall-net
+    restart: unless-stopped
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: redis-commander
+    restart: unless-stopped
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    ports:
+      - "8081:8081"
+    networks:
+      - micromall-net
+    depends_on:
+      - redis
+
 
 networks:
   micromall-net:
