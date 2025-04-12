@@ -44,6 +44,18 @@ public class ProductService implements IDaoService<Product, ProductDTO, ProductR
         return productMapper.toDTO(product);
     }
 
+    public ProductDTO createWithImage(ProductRequest request, String imageUrl) {
+        Category category = categoryRepository.findById(request.categoryId())
+                .orElseThrow(() -> new MyNotFoundException("Category not found"));
+
+        Product product = productMapper.fromRequestToEntity(request);
+        product.setCategory(category);
+        product.setImageUrl(imageUrl); 
+
+        product = productRepository.save(product);
+        return productMapper.toDTO(product);
+    }
+
     @Override
     public ProductDTO update(ProductRequest request, Long id) throws MyNotSaveException {
 
@@ -116,5 +128,7 @@ public class ProductService implements IDaoService<Product, ProductDTO, ProductR
                 })
                 .collect(Collectors.toList());
     }
+
+
 
 }

@@ -15,7 +15,8 @@ public class ProductMapper implements IMapper<Product, ProductDTO, ProductReques
 
     @Override
     public Product toEntity(ProductDTO dto) {
-        if (dto == null) {
+        if (dto == null) {        // Inject image URL into ProductRequest manually if needed
+
             return null;
         }
         return Product.builder()
@@ -25,6 +26,7 @@ public class ProductMapper implements IMapper<Product, ProductDTO, ProductReques
                 .price(dto.getPrice())
                 .createdAt(dto.getCreatedAt())
                 .updatedAt(dto.getUpdatedAt())
+                .imageUrl(dto.getImageUrl())
                 .build();
     }
 
@@ -38,8 +40,13 @@ public class ProductMapper implements IMapper<Product, ProductDTO, ProductReques
                 .title(entity.getTitle())
                 .description(entity.getDescription())
                 .price(entity.getPrice())
+                .imageUrl(entity.getImageUrl())
                 .createdAt(entity.getCreatedAt())
                 .updatedAt(entity.getUpdatedAt())
+                .category(CategoryDTO.builder()
+                        .id(entity.getCategory().getId())
+                        .title(entity.getCategory().getTitle())
+                        .build())
                 .build();
     }
 

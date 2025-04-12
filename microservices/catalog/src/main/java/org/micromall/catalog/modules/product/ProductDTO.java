@@ -18,6 +18,7 @@ public class ProductDTO {
     private String title;
     private String description;
     private Double price;
+    private String imageUrl;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private CategoryDTO category;

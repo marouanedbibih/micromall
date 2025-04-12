@@ -24,6 +24,7 @@ public class Product extends MyEntity {
     private String title;
     private String description;
     private Double price;
+    private String imageUrl;
 
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)

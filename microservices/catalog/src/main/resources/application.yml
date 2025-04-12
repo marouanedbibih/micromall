@@ -1,5 +1,5 @@
 server:
-  port: 8081
+  port: 8091
   
 spring:
   application:
@@ -13,4 +13,11 @@ management:
   endpoint:
     health:
       show-details: always
+minio:
+  url: http://localhost:9000
+  access-key: minioadmin
+  secret-key: minioadmin123
+  bucket: catalog
 
+cors:
+  allowed-origins: http://localhost:4200
