@@ -21,3 +21,6 @@ eureka:
   instance:
     health-check-url: /actuator/health  
     status-page-url: /actuator/info   
+
+cors:
+  allowed-origins: http://localhost:4200
