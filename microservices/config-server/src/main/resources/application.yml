@@ -1,15 +1,12 @@
 server:
   port: 8888
-
 spring:
+  profiles:
+    active: native
   application:
     name: config-server
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health, info, configprops, env
-  endpoint:
-    health:
-      show-details: always
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: classpath:/configurations
