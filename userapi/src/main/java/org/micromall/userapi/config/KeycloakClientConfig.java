@@ -32,6 +32,4 @@ public class KeycloakClientConfig {
                 .grantType(OAuth2Constants.CLIENT_CREDENTIALS)
                 .build();
     }
-
-
 }
