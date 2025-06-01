@@ -1,0 +1,48 @@
+server:
+  port: 8080
+
+spring:
+  config:
+    import: "optional:configserver:http://localhost:8888/userapi/default"
+  application:
+    name: user-api
+  datasource:
+    url: jdbc:mysql://localhost:3306/userapi_db?createDatabaseIfNotExist=true
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:7181/realms/micromall
+          jwk-set-uri: http://localhost:7181/realms/micromall/protocol/openid-connect/certs
+
+# Eureka client configuration
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
+
+# Keycloak admin client configuration
+keycloak:
+  server-url: http://localhost:7181
+  realm: micromall
+  client-id: admin-cli
+  client-secret: ${KEYCLOAK_CLIENT_SECRET:WPj07HtjBYcMlIUiqcIyFsnobCZ0gGF7}  # Set this via environment variable
+  ssl-required: external
+  confidential-port: 0
+
+# Logging configuration
+logging:
+  level:
+    org.keycloak: INFO
+    org.springframework.security: INFO
+    org.micromall: DEBUG
