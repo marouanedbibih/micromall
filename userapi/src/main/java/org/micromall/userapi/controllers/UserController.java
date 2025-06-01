@@ -1,7 +1,6 @@
 package org.micromall.userapi.controllers;
 
 import lombok.RequiredArgsConstructor;
-import org.micromall.userapi.exceptions.ApiException;
 import org.micromall.userapi.models.PageResponse;
 import org.micromall.userapi.models.Role;
 import org.micromall.userapi.models.User;
@@ -27,7 +26,7 @@ public class UserController {
     /**
      * Get paginated users with filtering and sorting
      * 
-     * @param page Page number (0-based), default 0
+     * @param page Page number (1-based), default 1
      * @param size Page size, default 10
      * @param search Search query for username, email, first or last name
      * @param sortBy Field to sort by (username, email, firstName, lastName)
@@ -38,7 +37,7 @@ public class UserController {
      */
     @GetMapping
     public ResponseEntity<PageResponse<User>> getUsers(
-            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String search,
             @RequestParam(defaultValue = "username") String sortBy,
@@ -52,10 +51,16 @@ public class UserController {
             role = Role.fromString(roleStr);
         }
         
+        // Convert 1-based page to 0-based for service layer
+        int zeroBasedPage = Math.max(0, page - 1);
+        
         // Get paginated users
         PageResponse<User> paginatedUsers = keycloakService.getPaginatedUsers(
-                page, size, search, sortBy, sortOrder, role, enabled
+                zeroBasedPage, size, search, sortBy, sortOrder, role, enabled
         );
+        
+        // Convert response to use 1-based pagination for API consumers
+        adjustPageResponseToOneBased(paginatedUsers);
         
         return ResponseEntity.ok(paginatedUsers);
     }
@@ -324,5 +329,24 @@ public class UserController {
         
         keycloakService.removeRoleFromUser(id, role);
         return ResponseEntity.ok(keycloakService.getUserById(id));
+    }
+    
+    /**
+     * Adjust a PageResponse from 0-based pagination (internal) to 1-based pagination (API)
+     * 
+     * @param pageResponse The PageResponse to adjust
+     * @param <T> The type of elements in the page
+     */
+    private <T> void adjustPageResponseToOneBased(PageResponse<T> pageResponse) {
+        if (pageResponse == null) {
+            return;
+        }
+        
+        // Convert page number from 0-based to 1-based
+        pageResponse.setPageNumber(pageResponse.getPageNumber() + 1);
+        
+        // Adjust first/last flags if needed
+        pageResponse.setFirst(pageResponse.getPageNumber() == 1);
+        pageResponse.setLast(pageResponse.getPageNumber() >= pageResponse.getTotalPages());
     }
 }

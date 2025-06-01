@@ -1,5 +1,6 @@
 package org.micromall.userapi.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,6 +25,7 @@ public class User {
      * Helper method to convert roles to string list for Keycloak
      * @return List of role names as strings
      */
+    @JsonIgnore
     public List<String> getRoleNames() {
         if (roles == null) {
             return List.of();

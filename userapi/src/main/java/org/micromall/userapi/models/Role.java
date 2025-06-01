@@ -1,5 +1,7 @@
 package org.micromall.userapi.models;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 /**
  * Enum representing the available roles in the system
  */
@@ -13,6 +15,7 @@ public enum Role {
         this.name = name;
     }
     
+    @JsonValue
     public String getName() {
         return name;
     }
