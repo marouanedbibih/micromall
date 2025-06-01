@@ -1,85 +1,46 @@
 services:
-  postgresql:
-    container_name: micromall_pg_sql
-    image: postgres:15
-    environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      PGDATA: /data/postgres
+  mysql:
+    container_name: micromall_mysql
+    image: mysql:8
+    ports:
+      - "3306:3306"
     volumes:
-      - ./pgsql:/data/postgres
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-    ports:
-      - "5432:5432"
-    networks:
-      - micromall-net
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U user"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-
-  # MongoDB
-  mongodb:
-    image: mongo
-    container_name: micromall_mongo_db
-    ports:
-      - 27017:27017
-    volumes:
-      - ./data/mongo:/data
+      - mysql-data:/var/lib/mysql
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=marouane
-      - MONGO_INITDB_ROOT_PASSWORD=marouane
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: keycloak_db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
     networks:
       - micromall-net
-    restart: unless-stopped
 
-  config-server:
-    build:
-      context: ../
-      dockerfile: docker/microservices/Dockerfile.config-server
-    container_name: micromall_config_server
-    ports:
-      - 8888:8888
-    networks:
-      - micromall-net
-    restart: unless-stopped
+  keycloak:
+    container_name: micromall_keycloak
+    image: quay.io/keycloak/keycloak:26.0.7
+    command: start-dev
     environment:
-      SPRING_GIT_URI: https://github.com/marouanedbibih/micromall
-      SPRING_PROFILES_ACTIVE: docker
-
-  eureka:
-    build:
-      context: ../
-      dockerfile: docker/microservices/Dockerfile.eureka
-    container_name: micromall_eureka
+      - KC_BOOTSTRAP_ADMIN_USERNAME=admin
+      - KC_BOOTSTRAP_ADMIN_PASSWORD=admin
+      - KC_DB=mysql
+      - KC_DB_USERNAME=root
+      - KC_DB_PASSWORD=root
+      - KC_DB_URL=jdbc:mysql://mysql:3306/keycloak_db?createDatabaseIfNotExist=true
+      - KC_DB_DRIVER=com.mysql.cj.jdbc.Driver
+      - KC_DB_POOL_INITIAL_SIZE=10
+      - KC_DB_POOL_MAX_SIZE=100
+      - KC_DB_POOL_MIN_SIZE=5
+      - KC_DB_SCHEMA=keycloak_db
     ports:
-      - 8761:8761
-    networks:
-      - micromall-net
-    restart: unless-stopped
+      - "7181:8080"
     depends_on:
-      - config-server
-    environment:
-      SPRING_PROFILES_ACTIVE: docker
-      EUREKA_INSTANCE_HOSTNAME: eureka
-      CONFIGSERVER_HOST: config-server
-      CONFIGSERVER_PORT: 8888
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8761/actuator/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
+      - mysql
+    networks:
+      - micromall-net
+
+volumes:
+  mysql-data:
 
 networks:
   micromall-net:
     driver: bridge
     name: micromall-net
-
-volumes:
-  pgsql-data:
-    driver: local
-    name: micromall-pgsql-data
-
-
